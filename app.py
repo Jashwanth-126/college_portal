@@ -18,6 +18,10 @@ from werkzeug.utils import secure_filename
 import uuid
 # Load environment variables
 load_dotenv()
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+
+supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
 # Create Flask app first
 app = Flask(__name__)
@@ -33,10 +37,7 @@ app.config["MAIL_DEFAULT_SENDER"] = app.config["MAIL_USERNAME"]
 app.config["MAIL_TIMEOUT"] = 10
 mail = Mail(app)
 
-# --- Supabase connection ---
-url = os.getenv("SUPABASE_URL")
-key = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(url, key)
+# --- Supabase connection --
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -1191,6 +1192,13 @@ def get_syllabus_subjects(section_id):
     )
     return jsonify(subjects)
 
+
+def get_file_extension(filename):
+    if '.' in filename:
+        return filename.rsplit('.', 1)[1].lower()
+    return '' 
+
+
 @app.route("/admin/add_note", methods=["GET", "POST"])
 def add_note_logic():
     if not require_admin():
@@ -1318,6 +1326,7 @@ def student_notes_view(syllabus_subject_id):
     return render_template("student_notes_view.html", 
                            notes=notes, 
                            subject_name=subject_name)
+
 
 
 
