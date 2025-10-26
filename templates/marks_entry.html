@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enter Marks</title>
+    </head>
+<body>
+    
+    <h2>Enter Marks (Admin)</h2>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="padding: 10px; margin-bottom: 15px; border: 1px solid; background-color: {% if category == 'error' %}#fdd{% elif category == 'success' %}#dfd{% else %}#ddf{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('marks_entry') }}">
+        <label for="section_id">Select Section:</label>
+        <select name="section_id" required>
+            <option value="">--Select Section--</option>
+            {% for section in sections %}
+                <option value="{{ section.id }}" {% if section_id and section.id == section_id %}selected{% endif %}>{{ section.name }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+
+        <label for="subject_name">Subject Name:</label>
+        <input type="text" name="subject_name" value="{{ subject_name or '' }}" required>
+        <br><br>
+
+        <label for="exam_date">Exam Date:</label>
+        <input type="date" name="exam_date" value="{{ exam_date or '' }}" required>
+        <br><br>
+        
+        <label for="total_marks">Total Marks for Exam:</label>
+        <input type="number" name="total_marks" value="{{ total_marks or '' }}" min="1" required>
+        <br><br>
+
+        <button type="submit">Load Students</button>
+    </form>
+
+    {% if students and section_id and subject_name and exam_date and total_marks %}
+        <hr>
+        <h3>Enter Individual Marks (Max: {{ total_marks }})</h3>
+        
+        <form method="POST" action="{{ url_for('marks_entry') }}">
+            <input type="hidden" name="section_id" value="{{ section_id }}">
+            <input type="hidden" name="subject_name" value="{{ subject_name }}">
+            <input type="hidden" name="exam_date" value="{{ exam_date }}">
+            <input type="hidden" name="total_marks" value="{{ total_marks }}">
+            <input type="hidden" name="marks_submitted" value="1">
+            
+            <table border="1">
+                <tr>
+                    <th>Student Name</th>
+                    <th>Username</th>
+                    <th>Marks Obtained (Max: {{ total_marks }})</th>
+                </tr>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.username }}</td>
+                    <td>
+                        <input type="number" 
+                               name="marks_{{ student.id }}" 
+                               value="{{ marks_map.get(student.id) or '' }}" 
+                               min="0" 
+                               max="{{ total_marks }}" 
+                               required>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <br>
+            <button type="submit">Save All Marks</button>
+        </form>
+    {% elif request.method == "POST" and not students %}
+        <div style="color: blue;">No students found for the selected section.</div>
+    {% endif %}
+
+</body>
+</html>

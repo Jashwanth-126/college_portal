@@ -1,0 +1,8 @@
+Flask
+python-dotenv
+requests
+supabase-py
+psycopg2-binary  # Necessary for any raw Postgres interaction
+gunicorn         # Production WSGI server
+Flask-Mail
+Jinja2

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Dashboard</title>
+    <style>
+        .container { display: flex; gap: 20px; }
+        .panel { flex: 1; border: 1px solid #ccc; padding: 15px; }
+        h3 { margin-top: 0; }
+    </style>
+</head>
+<body>
+    <h2>Attendance Dashboard</h2>
+
+    <!-- Date Picker -->
+    <form method="GET">
+        <label for="attendance_date">Select Date:</label>
+        <input type="date" id="attendance_date" name="attendance_date" 
+               value="{{ selected_date if selected_date else '' }}" required>
+        <button type="submit">Load Attendance</button>
+    </form>
+
+    {% if selected_date %}
+        <p><strong>Selected Date:</strong> {{ selected_date }}</p>
+    {% endif %}
+
+    <div class="container">
+        <!-- Left Panel: Science -->
+        <div class="panel">
+            <h3>Science</h3>
+            <ul>
+                {% for cls in science_classes %}
+                    <li>
+                        <a href="{{ url_for('manage_sections', class_id=cls.id, attendance_date=selected_date) }}">
+                            {{ cls.name }}
+                        </a>
+                    </li>
+                {% else %}
+                    <li>No Science classes found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Right Panel: Commerce -->
+        <div class="panel">
+            <h3>Commerce</h3>
+            <ul>
+                {% for cls in commerce_classes %}
+                    <li>
+                        <a href="{{ url_for('manage_sections', class_id=cls.id, attendance_date=selected_date) }}">
+                            {{ cls.name }}
+                        </a>
+                    </li>
+                {% else %}
+                    <li>No Commerce classes found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

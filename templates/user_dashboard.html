@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - SDC PU College Portal{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2 text-center">
+            
+            <h1 class="mb-4">Welcome, {{ user }}!</h1> 
+            <p class="text-end mb-4">
+                <a href="{{ url_for('user_logout') }}" class="btn btn-sm btn-danger">Logout</a>
+            </p>
+            <a href="{{ url_for('student_structured_syllabus') }}" class="btn btn-lg btn-warning">
+                 View Subject Syllabus
+            </a>
+            <div class="card shadow-lg mb-5">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">My Profile Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text"><strong>Username:</strong> {{ user }}</p>
+                    <p class="card-text">
+                        <strong>Section:</strong> 
+                        {% if section_id %}
+                            {{ section_id }}
+                        {% else %}
+                            <span class="text-danger">Not Assigned</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="card my-4 shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Academic Records</h5>
+                    
+                    {% if 'att_student_id' in session %}
+                        <p class="card-text">View your complete attendance and exam records.</p>
+                        
+                        <a href="{{ url_for('student_attendance_view') }}" class="btn btn-lg btn-success me-3">
+                            View Attendance Report
+                        </a>
+                        
+                        <a href="{{ url_for('student_marks_view') }}" class="btn btn-lg btn-info">
+                            View Marks Report
+                        </a>
+
+                    {% else %}
+                        <p class="card-text text-danger fw-bold">
+                            Access to academic features is currently unavailable. Please contact the Admin.
+                        </p>
+                    {% endif %}
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

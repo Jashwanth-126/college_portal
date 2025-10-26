@@ -1,0 +1,26 @@
+<!-- templates/sections.html -->
+<!DOCTYPE html>
+<html>
+<head><title>Sections</title></head>
+<body>
+  <h2>{{ course.name }} - {{ class_info.name }} (Sections)</h2>
+
+  <form method="post">
+    <input type="text" name="section_name" placeholder="Section Name">
+    <button type="submit">Add Section</button>
+  </form>
+
+<ul>
+    {% for sec in sections %}
+        <li>
+            <a href="{{ url_for('section_students', section_id=sec.id, date=selected_date) }}">
+                {{ sec.name }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+
+
+  <a href="{{ url_for('attendance_dashboard') }}">Back</a>
+</body>
+</html>

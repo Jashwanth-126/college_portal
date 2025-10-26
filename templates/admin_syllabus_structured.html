@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Structured Syllabus Manager{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="mb-4 text-center">Admin: Structured Syllabus Management</h2>
+            <p class="text-end">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-secondary">← Back to Dashboard</a>
+            </p>
+
+            <div class="card shadow mb-4">
+                <div class="card-header bg-secondary text-white">
+                    Select Section
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('admin_syllabus_manager') }}">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-9">
+                                <label for="section_id" class="form-label">Section</label>
+                                <select class="form-select" id="section_id" name="section_id" required>
+                                    <option value="">--Select Section--</option>
+                                    {% for section in sections %}
+                                        <option value="{{ section.id }}" {% if selected_section_id and section.id == selected_section_id %}selected{% endif %}>
+                                            {{ section.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary w-100">Load Syllabus</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if selected_section_id %}
+            <div class="alert alert-info fw-bold">
+                Editing Syllabus Structure for: {{ selected_section_name or 'Section' }}
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    Existing Subjects in Syllabus
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Subject Name</th>
+                                    <th>Exam Max Marks</th>
+                                    <th>Lab Max Marks</th>
+                                    <th>Assignment Max Marks</th>
+                                    <th>Total Marks</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if syllabus_subjects %}
+                                    {% for subject in syllabus_subjects %}
+                                    <tr>
+                                        <td>{{ subject.subject_name }}</td>
+                                        <td>{{ subject.exam_marks }}</td>
+                                        <td>{{ subject.lab_marks }}</td>
+                                        <td>{{ subject.assignment_marks }}</td>
+                                        <td><span class="badge bg-success">{{ subject.total_marks }}</span></td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-info me-2" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editModal"
+                                                data-id="{{ subject.id }}"
+                                                data-name="{{ subject.subject_name }}"
+                                                data-exam="{{ subject.exam_marks }}"
+                                                data-lab="{{ subject.lab_marks }}"
+                                                data-assign="{{ subject.assignment_marks }}">
+                                                Edit
+                                            </button>
+                                            <form method="POST" action="{{ url_for('admin_syllabus_subject_save') }}" class="d-inline">
+                                                <input type="hidden" name="section_id" value="{{ selected_section_id }}">
+                                                <input type="hidden" name="action" value="delete">
+                                                <input type="hidden" name="subject_id_to_delete" value="{{ subject.id }}">
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete the syllabus for {{ subject.subject_name }}? This is permanent.');">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No syllabus subjects defined for this section. Use the form below to add one.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    Add New Subject to Syllabus
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin_syllabus_subject_save') }}">
+                        <input type="hidden" name="section_id" value="{{ selected_section_id }}">
+                        <input type="hidden" name="action" value="save">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Subject Name</label>
+                                <input type="text" class="form-control" name="subject_name" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Final Exam Marks</label>
+                                <input type="number" class="form-control" name="exam_marks" required min="0">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Lab/Practical Marks</label>
+                                <input type="number" class="form-control" name="lab_marks" required min="0">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Assignment Marks</label>
+                                <input type="number" class="form-control" name="assignment_marks" required min="0">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-success w-100">Add Subject</button>
+                            </div>
+                        </div>
+                        <div class="form-text mt-3">Total Marks for the subject will be calculated as: **Exam + Lab + Assignment**.</div>
+                    </form>
+                </div>
+            </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="editModalLabel">Edit Subject Syllabus Structure</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin_syllabus_subject_save') }}" id="editForm">
+                <input type="hidden" name="section_id" value="{{ selected_section_id }}">
+                <input type="hidden" name="action" value="save">
+                <input type="hidden" name="subject_id" id="modal-subject-id">
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="modal-subject-name" class="form-label">Subject Name</label>
+                        <input type="text" class="form-control" name="subject_name" id="modal-subject-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="modal-exam-marks" class="form-label">Final Exam Marks</label>
+                        <input type="number" class="form-control" name="exam_marks" id="modal-exam-marks" required min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modal-lab-marks" class="form-label">Lab/Practical Marks</label>
+                        <input type="number" class="form-control" name="lab_marks" id="modal-lab-marks" required min="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="modal-assignment-marks" class="form-label">Assignment Marks</label>
+                        <input type="number" class="form-control" name="assignment_marks" id="modal-assignment-marks" required min="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const editModal = document.getElementById('editModal');
+    editModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        const exam = button.getAttribute('data-exam');
+        const lab = button.getAttribute('data-lab');
+        const assign = button.getAttribute('data-assign');
+
+        // Update the modal's input fields
+        document.getElementById('modal-subject-id').value = id;
+        document.getElementById('modal-subject-name').value = name;
+        document.getElementById('modal-exam-marks').value = exam;
+        document.getElementById('modal-lab-marks').value = lab;
+        document.getElementById('modal-assignment-marks').value = assign;
+    });
+});
+</script>
+
+{% endblock %}

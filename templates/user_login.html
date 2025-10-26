@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Login - SDC PU College Portal</title>
+</head>
+<body>
+    <h2>User Login</h2>
+    <form method="POST">
+        <label>Username:</label>
+        <input type="text" name="username" required><br><br>
+
+        <label>Gmail:</label>
+        <input type="email" name="gmail" required><br><br>
+
+        <label>Password:</label>
+        <input type="password" name="password" required><br><br>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <br>
+    <a href="{{ url_for('user_forgot_password') }}">Forgot Password?</a><br>
+    <a href="{{ url_for('admin_login') }}">Back to Admin Login</a>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li style="color: {% if category == 'error' %}red{% else %}green{% endif %};">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

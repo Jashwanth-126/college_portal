@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Sections - {{ class_info.name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h2 { color: #2c3e50; }
+        ul { list-style: none; padding: 0; }
+        ul li { margin: 8px 0; }
+        ul li a { margin-right: 15px; text-decoration: none; color: #3498db; }
+        ul li a:hover { text-decoration: underline; }
+        .pdf-link { color: green; }
+        .back-link { display: inline-block; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>Sections for {{ course.name }} - {{ class_info.name }}</h2>
+
+    {% if sections %}
+        <ul>
+            {% for sec in sections %}
+                <li>
+                    <!-- Go to student attendance -->
+                    <a href="{{ url_for('section_students', section_id=sec.id) }}">
+                        {{ sec.name }}
+                    </a>
+
+                    <!-- PDF link -->
+                    <a href="{{ url_for('download_attendance_pdf', section_id=sec.id) }}" class="pdf-link">
+                        📄 Download PDF
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No sections found for this class.</p>
+    {% endif %}
+
+    <a href="{{ url_for('admin_dashboard') }}" class="back-link">⬅ Back to Dashboard</a>
+</body>
+</html>

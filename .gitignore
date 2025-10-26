@@ -1,0 +1,41 @@
+# ------------------------------------
+# General Flask/Python Ignores
+# ------------------------------------
+
+# Byte-compiled / optimized / dynamically loaded files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+*.dist-info/
+
+# Virtual Environments
+venv/
+env/
+.venv/
+.python-version
+
+# Logs and Documentation
+*.log
+docs/_build/
+
+# IDE/Editor Files
+.vscode/  # VS Code settings
+.idea/    # PyCharm/IntelliJ settings
+*~
+.DS_Store # macOS files
+
+# ------------------------------------
+# Security / Environment Variables
+# CRITICAL: DO NOT COMMIT SECRETS
+# ------------------------------------
+
+# Local environment file containing database keys and API secrets (Supabase, Flask Secret Key, Mail)
+.env
+
+# Flask session files (if used in development mode)
+instance/
+
+# Render/Deployment Specific
+.render/

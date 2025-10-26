@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - SDC PU College Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            color: #2c3e50;
+        }
+        .menu {
+            margin-top: 20px;
+        }
+        .menu a {
+            display: inline-block;
+            margin: 8px 0;
+            padding: 8px 12px;
+            background: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .menu a:hover {
+            background: #2980b9;
+        }
+        .attendance-container {
+            display: flex;
+            margin-top: 30px;
+            gap: 40px;
+        }
+        .panel {
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .panel h3 {
+            margin-top: 0;
+            text-align: center;
+            background: #f4f4f4;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            margin: 5px 0;
+        }
+        ul li a {
+            color: #34495e;
+            text-decoration: none;
+        }
+        ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>Welcome, {{ admin }}</h2>
+    <p>This is the Admin Dashboard</p>
+
+    <div class="menu">
+        <a href="{{ url_for('register_student') }}">Register Student (Admissions)</a>
+        <a href="{{ url_for('attendance_dashboard') }}">Attendance Module</a>
+        <a href="{{ url_for('attendance_report') }}">Attendance Reports</a>
+        <a href="{{ url_for('marks_entry') }}">Marks Entry</a>
+<a href="{{ url_for('marks_report') }}">Marks Report</a>
+
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <!-- Attendance split panel -->
+    <div class="attendance-container">
+        <!-- Left Panel: Science -->
+        <div class="panel">
+            <h3>Science Classes</h3>
+            {% if science_classes %}
+                <ul>
+                    {% for c in science_classes %}
+                        <li>
+                            <a href="{{ url_for('manage_sections', class_id=c.id) }}">
+                                {{ c.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No Science classes found.</p>
+            {% endif %}
+        </div>
+
+        <!-- Right Panel: Commerce -->
+        <div class="panel">
+            <h3>Commerce Classes</h3>
+            {% if commerce_classes %}
+                <ul>
+                    {% for c in commerce_classes %}
+                        <li>
+                            <a href="{{ url_for('manage_sections', class_id=c.id) }}">
+                                {{ c.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No Commerce classes found.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

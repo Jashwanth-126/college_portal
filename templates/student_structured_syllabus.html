@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}My Subject Syllabus{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <h2 class="mb-4 text-center">Subject Syllabus Structure</h2>
+            
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="text-primary">Section: {{ section_name }}</h4>
+                <a href="{{ url_for('user_dashboard') }}" class="btn btn-sm btn-secondary">
+                    ← Back to Dashboard
+                </a>
+            </div>
+
+            <div class="card shadow-lg">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Defined Maximum Marks by Subject</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if syllabus_subjects %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped mb-0 align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Subject Name</th>
+                                    <th>Final Exam (Max Marks)</th>
+                                    <th>Lab/Practical (Max Marks)</th>
+                                    <th>Assignment (Max Marks)</th>
+                                    <th class="text-center">Total Marks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subject in syllabus_subjects %}
+                                <tr>
+                                    <td><strong class="text-dark">{{ subject.subject_name }}</strong></td>
+                                    <td>{{ subject.exam_marks }}</td>
+                                    <td>{{ subject.lab_marks }}</td>
+                                    <td>{{ subject.assignment_marks }}</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success fs-6">{{ subject.total_marks }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning text-center m-4" role="alert">
+                        The structured syllabus for your section is currently not defined. Please check back later.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
