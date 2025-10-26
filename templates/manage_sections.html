@@ -3,38 +3,166 @@
 <head>
     <title>Manage Sections - {{ class_info.name }}</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h2 { color: #2c3e50; }
-        ul { list-style: none; padding: 0; }
-        ul li { margin: 8px 0; }
-        ul li a { margin-right: 15px; text-decoration: none; color: #3498db; }
-        ul li a:hover { text-decoration: underline; }
-        .pdf-link { color: green; }
-        .back-link { display: inline-block; margin-top: 20px; }
+        /* --- GLOBAL STYLES --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 30px;
+            background-color: #f0f2f5; /* Light, professional background */
+            color: #34495e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- HEADER --- */
+        h2 {
+            color: #007bff; /* Primary Blue */
+            font-weight: 700;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        /* --- SECTIONS LIST --- */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background: #f9fbfd;
+            margin-bottom: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: box-shadow 0.2s;
+            display: flex; /* Align links side-by-side */
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        ul li:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Section Name Link (Main Link) */
+        ul li a:first-child {
+            flex-grow: 1;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: background-color 0.2s;
+        }
+        
+        ul li a:first-child:hover {
+            background-color: #e9f2ff; /* Light blue hover background */
+            color: #0056b3;
+        }
+
+        /* PDF Download Link */
+        .pdf-link {
+            display: inline-block;
+            padding: 15px 20px;
+            background-color: #2ecc71; /* Green color */
+            color: white !important;
+            text-decoration: none;
+            font-weight: 500;
+            border-left: 1px solid #27ae60;
+            transition: background-color 0.2s;
+            white-space: nowrap; /* Prevent wrapping */
+        }
+
+        .pdf-link:hover {
+            background-color: #27ae60;
+            text-decoration: none;
+        }
+        
+        /* No sections message */
+        p {
+            text-align: center;
+            color: #95a5a6;
+            padding: 20px;
+            font-style: italic;
+            border: 1px dashed #ccc;
+            border-radius: 5px;
+        }
+
+        /* --- BACK LINK --- */
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #6c757d; /* Grey button */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-link:hover {
+            background-color: #5a6268;
+        }
+        
+        /* Responsive adjustment for small screens */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            ul li {
+                flex-direction: column;
+            }
+            ul li a:first-child {
+                width: 100%;
+                text-align: center;
+            }
+            .pdf-link {
+                width: 100%;
+                text-align: center;
+                border-left: none;
+                border-top: 1px solid #27ae60;
+            }
+        }
     </style>
 </head>
 <body>
-    <h2>Sections for {{ course.name }} - {{ class_info.name }}</h2>
+    <div class="container">
+        <h2>Sections for {{ course.name }} - {{ class_info.name }}</h2>
 
-    {% if sections %}
-        <ul>
-            {% for sec in sections %}
-                <li>
-                    <!-- Go to student attendance -->
-                    <a href="{{ url_for('section_students', section_id=sec.id) }}">
-                        {{ sec.name }}
-                    </a>
+        {% if sections %}
+            <ul>
+                {% for sec in sections %}
+                    <li>
+                        <a href="{{ url_for('section_students', section_id=sec.id) }}">
+                            Section: **{{ sec.name }}**
+                        </a>
 
-                    <!-- PDF link -->
-                    <a href="{{ url_for('download_attendance_pdf', section_id=sec.id) }}" class="pdf-link">
-                        📄 Download PDF
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No sections found for this class.</p>
-    {% endif %}
+                        <a href="{{ url_for('download_attendance_pdf', section_id=sec.id) }}" class="pdf-link">
+                            📄 Download Attendance PDF
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No sections found for this class. Please define sections in the Attendance Module first.</p>
+        {% endif %}
+    </div>
 
     <a href="{{ url_for('admin_dashboard') }}" class="back-link">⬅ Back to Dashboard</a>
 </body>

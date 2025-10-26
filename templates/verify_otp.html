@@ -1,10 +1,87 @@
 <!DOCTYPE html>
 <html>
-<head><title>Verify OTP</title></head>
+<head>
+    <title>Verify OTP - SDC PU College Portal</title>
+    <style>
+        /* General Body and Layout */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5; /* Consistent light background */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Heading Style */
+        h2 {
+            color: #007bff; /* Primary College Blue */
+            margin-bottom: 25px;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        /* Form Container Styling (The Card) */
+        form {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 320px; /* Slightly narrower for OTP */
+            text-align: center; /* Center form elements */
+        }
+
+        /* Input Field Styling (Specific for OTP) */
+        input[type="text"] {
+            width: 100%;
+            /* Make the input look substantial and centered */
+            padding: 15px 10px; 
+            text-align: center;
+            letter-spacing: 5px; /* Visual spacing for OTP digits */
+            font-size: 1.5rem; /* Larger font for easy entry */
+            
+            border: 2px solid #ced4da; /* Slightly thicker border */
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px; /* Space before the button */
+        }
+
+        input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        /* Button Styling (Action: Verify) */
+        button[type="submit"] {
+            width: 100%;
+            background-color: #17a2b8; /* Info Blue/Cyan for verification action */
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.1s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #138496;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
 <body>
     <h2>Enter OTP</h2>
     <form method="POST">
-        <input type="text" name="otp" maxlength="6" required>
+        <input type="text" name="otp" maxlength="6" required placeholder="######">
         <button type="submit">Verify</button>
     </form>
 </body>

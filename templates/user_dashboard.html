@@ -2,6 +2,116 @@
 
 {% block title %}Student Dashboard - SDC PU College Portal{% endblock %}
 
+{% block head %}
+    {{ super() }}
+    <style>
+        /* General Layout */
+        body {
+            background-color: #f0f2f5; /* Consistent light background */
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .container {
+            padding-top: 50px;
+        }
+
+        /* Welcome Header */
+        h1 {
+            color: #007bff; /* Primary Blue */
+            font-weight: 700;
+            margin-bottom: 20px !important;
+        }
+        
+        /* Logout Button - Floating right and styled */
+        .text-end a.btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            transition: background-color 0.2s;
+        }
+        .text-end a.btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        /* Primary Action Button (Syllabus) */
+        a.btn-lg {
+            font-size: 1.25rem;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        a.btn-lg:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Card Styling */
+        .card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Profile Summary Card Header */
+        .card-header.bg-primary {
+            background-color: #007bff !important; /* Blue header */
+            border-bottom: none;
+            padding: 15px;
+        }
+
+        /* Profile Summary Card Body */
+        .card-body p {
+            font-size: 1.05rem;
+            color: #343a40;
+            margin-bottom: 8px;
+        }
+
+        .card-body strong {
+            color: #007bff;
+            font-weight: 600;
+        }
+        
+        /* Academic Records Card */
+        .card-body h5 {
+            color: #343a40;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Secondary Action Buttons (Attendance/Marks) */
+        .card-body a.btn-lg {
+            margin: 10px 10px;
+        }
+        
+        /* Success Button (Attendance) */
+        .card-body a.btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .card-body a.btn-success:hover {
+            background-color: #1e7e34;
+            border-color: #1e7e34;
+        }
+
+        /* Info Button (Marks) */
+        .card-body a.btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            color: white; /* Ensure text is readable */
+        }
+        .card-body a.btn-info:hover {
+            background-color: #138496;
+            border-color: #138496;
+        }
+
+        /* Unassigned Section Warning */
+        .text-danger {
+            font-weight: 600;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 <div class="container my-5">
     <div class="row">
@@ -9,11 +119,13 @@
             
             <h1 class="mb-4">Welcome, {{ user }}!</h1> 
             <p class="text-end mb-4">
-                <a href="{{ url_for('user_logout') }}" class="btn btn-sm btn-danger">Logout</a>
+                <a href="{{ url_for('user_logout') }}" class="btn btn-sm btn-danger shadow-sm">Logout</a>
             </p>
-            <a href="{{ url_for('student_structured_syllabus') }}" class="btn btn-lg btn-warning">
-                 View Subject Syllabus
+            
+            <a href="{{ url_for('student_structured_syllabus') }}" class="btn btn-lg btn-success me-3 mb-4 shadow">
+                📚 View Syllabus & Study Notes
             </a>
+            
             <div class="card shadow-lg mb-5">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">My Profile Summary</h5>
@@ -45,7 +157,7 @@
                         <a href="{{ url_for('student_marks_view') }}" class="btn btn-lg btn-info">
                             View Marks Report
                         </a>
-
+                        
                     {% else %}
                         <p class="card-text text-danger fw-bold">
                             Access to academic features is currently unavailable. Please contact the Admin.

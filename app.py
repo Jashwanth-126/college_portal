@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import csv
 from io import BytesIO
 from datetime import date, datetime, timedelta
+import datetime as dt # Import the module as 'dt' to avoid conflicts
 from reportlab.lib.pagesizes import letter
 from io import StringIO, BytesIO
 from reportlab.lib.pagesizes import letter
@@ -12,6 +13,9 @@ from reportlab.pdfgen import canvas
 from flask_mail import Mail, Message
 import random
 from datetime import datetime
+from flask import jsonify # Needed for the new API route
+from werkzeug.utils import secure_filename
+import uuid
 # Load environment variables
 load_dotenv()
 
@@ -93,6 +97,41 @@ def forgot_password():
 def logout():
     session.pop("admin", None)
     return redirect(url_for("admin_login"))
+
+
+# --- JINJA2 CUSTOM FILTERS ---
+
+def datetimeformat(value, format='%Y-%m-%d %I:%M %p'):
+    """
+    Custom filter to format Supabase ISO timestamps using the standard dt.datetime module access.
+    """
+    if value is None:
+        return ""
+    
+    # 1. Prepare the value: Replace 'Z' with '+00:00' (UTC timezone)
+    prepared_value = value.replace('Z', '+00:00')
+    
+    # 2. Determine the parsing format based on whether microseconds are present.
+    if '.' in prepared_value:
+        parse_format = '%Y-%m-%dT%H:%M:%S.%f%z'
+    else:
+        parse_format = '%Y-%m-%dT%H:%M:%S%z'
+        
+    try:
+        # CRITICAL FIX: Use the 'dt' alias to call the standard class method
+        dt_obj = dt.datetime.strptime(prepared_value, parse_format)
+        
+        # 3. Format the datetime object to the desired output string
+        return dt_obj.strftime(format)
+        
+    except ValueError:
+        # Fallback if the parsing fails
+        return value
+
+# Register the filter with Flask's Jinja environment
+app.jinja_env.filters['datetimeformat'] = datetimeformat
+
+# ----------------------------
 
 @app.route("/register_student", methods=["GET", "POST"])
 def register_student():
@@ -373,6 +412,12 @@ def require_admin():
         flash("Please login as Admin.", "error")
         return False
     return True
+
+def get_file_extension(filename):
+    """Safely extracts the file extension."""
+    if '.' in filename:
+        return filename.rsplit('.', 1)[1].lower()
+    return ''
 
 def is_sunday(d: date) -> bool:
     return d.weekday() == 6  # 0=Mon ... 6=Sun
@@ -1123,6 +1168,158 @@ def student_marks_view():
         marks_records=marks_records,
         total_exams=total_exams
     )
+
+
+# Helper function (Ensure this is in your file, likely near other helpers)
+def get_file_extension(filename):
+    if '.' in filename:
+        return filename.rsplit('.', 1)[1].lower()
+    return ''
+
+# API Route to fetch subjects for a selected section via AJAX/Fetch
+@app.route("/api/syllabus_subjects/<int:section_id>", methods=["GET"])
+def get_syllabus_subjects(section_id):
+    if not require_admin():
+        return jsonify({"error": "Unauthorized"}), 401 
+
+    subjects = (
+        supabase.table("section_subject_syllabi")
+        .select("id, subject_name")
+        .eq("section_id", section_id)
+        .order("subject_name")
+        .execute().data
+    )
+    return jsonify(subjects)
+
+@app.route("/admin/add_note", methods=["GET", "POST"])
+def add_note_logic():
+    if not require_admin():
+        # Redirect to Admin login if not authenticated
+        return redirect(url_for("admin_login"))
+
+    # Fetch all sections to populate the first dropdown
+    sections_response = supabase.table("sections").select("id, name").order("name").execute().data
+    
+    if request.method == "GET":
+        # Display the form
+        return render_template("add_note_form.html", sections=sections_response)
+
+    if request.method == "POST":
+        # Get form data
+        syllabus_subject_id = request.form.get("syllabus_subject_id", type=int)
+        title = request.form.get("title")
+        note_type = request.form.get("note_type")
+        uploaded_by = session["admin"] # Confirmed correct key for Admin identifier
+
+        content_url = None
+        content_text = None
+        
+        if not syllabus_subject_id:
+            flash("Subject must be selected from the syllabus.", "error")
+            return redirect(request.url)
+
+        try:
+            # Fetch the parent section_id for Storage folder organization
+            syllabus_data = supabase.table("section_subject_syllabi").select("section_id").eq("id", syllabus_subject_id).single().execute().data
+            section_id = syllabus_data["section_id"]
+            
+            if note_type in ["PDF", "Image"]:
+                file = request.files.get("file_upload")
+               
+                if not file or file.filename == "":
+                    flash("No file selected for file upload.", "error")
+                    return redirect(request.url)
+
+                # 1. Secure filename and create unique path
+                original_filename = secure_filename(file.filename)
+                file_extension = get_file_extension(original_filename)
+                unique_filename = f"{uuid.uuid4()}.{file_extension}"
+                storage_path = f"notes/{section_id}/{unique_filename}"
+                
+                # 2. Upload file to Supabase Storage
+                file_bytes = file.read() 
+                
+                # --- FIX: The Supabase client raises an exception on failure, eliminating the need for db_response.get("error").
+                supabase.storage.from_("subject-notes").upload(
+                    path=storage_path,
+                    file=file_bytes,
+                    file_options={"content-type": file.mimetype, "upsert": "true"}
+                )
+                
+                # 3. Get the public URL
+                content_url = (
+                    supabase.storage
+                    .from_("subject-notes")
+                    .get_public_url(storage_path)
+                )
+  
+            elif note_type in ["Link", "Text"]:
+                content_input = request.form.get("content_input")
+                if not content_input:
+                    flash(f"Content cannot be empty for {note_type} notes.", "error")
+                    return redirect(request.url)
+
+                if note_type == "Link":
+                    content_url = content_input
+                else: # Text
+                    content_text = content_input
+     
+            # 4. Insert note metadata into the database
+            data_to_insert = {
+                "syllabus_subject_id": syllabus_subject_id, # Link to the syllabus entry
+                "title": title,
+                "note_type": note_type,
+                "content_url": content_url,
+                "content_text": content_text,
+                "uploaded_by": uploaded_by
+            }
+            
+            # --- FIX: The Supabase client raises an exception on failure, eliminating the need for db_response.get("error").
+            supabase.table("subject_notes").insert(data_to_insert).execute()
+            
+            flash("Note added successfully to the section's syllabus!", "success")
+            return redirect(url_for("admin_dashboard"))
+
+        except Exception as e:
+            # Catch any Supabase API exceptions (including RLS, storage, or bad data)
+            flash(f"An error occurred: {e}", "error")
+            return redirect(request.url)
+
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/student/notes/<int:syllabus_subject_id>")
+def student_notes_view(syllabus_subject_id):
+    # Student/User login check
+    if "user" not in session:
+        flash("Please log in to view notes.", "error")
+        return redirect(url_for("user_login"))
+
+    # Fetch all notes for the specific syllabus entry
+    notes = (
+        supabase.table("subject_notes")
+        .select("*")
+        .eq("syllabus_subject_id", syllabus_subject_id)
+        .order("created_at", desc=True)
+        .execute().data
+    )
+    
+    # Fetch the subject name for the header
+    subject_data = (
+        supabase.table("section_subject_syllabi")
+        .select("subject_name")
+        .eq("id", syllabus_subject_id)
+        .single().execute().data
+    )
+    
+    subject_name = subject_data.get("subject_name", "Subject")
+
+    # This requires a new template: 'templates/student_notes_view.html'
+    return render_template("student_notes_view.html", 
+                           notes=notes, 
+                           subject_name=subject_name)
+
+
 
 
 if __name__ == "__main__":

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ subject_name }} Notes{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">📚 Notes for {{ subject_name }}</h1>
+
+    {% if notes %}
+        <div class="list-group">
+            {% for note in notes %}
+            <div class="list-group-item list-group-item-action flex-column align-items-start mb-3 shadow-sm">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1 text-primary">{{ note.title }}</h5>
+                    <small class="badge bg-secondary">{{ note.note_type }}</small>
+                </div>
+                <small>Uploaded on: {{ note.created_at | datetimeformat }}</small>
+                
+                <hr class="my-2">
+
+                {% if note.note_type == 'Text' %}
+                    <p class="mb-1 text-dark">{{ note.content_text | safe }}</p>
+                
+                {% elif note.content_url %}
+                    <a href="{{ note.content_url }}" target="_blank" class="btn btn-sm 
+                        {% if note.note_type == 'PDF' %}btn-danger{% elif note.note_type == 'Image' %}btn-info{% else %}btn-success{% endif %}
+                        mt-2">
+                        {% if note.note_type == 'PDF' %}
+                            View PDF
+                        {% elif note.note_type == 'Image' %}
+                            View Image
+                        {% else %}
+                            Go to Link
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <p class="mb-1 text-warning">Content not available.</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            No notes have been uploaded for {{ subject_name }} yet.
+        </div>
+    {% endif %}
+
+    <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary mt-4">← Back to Dashboard</a>
+</div>
+{% endblock %}

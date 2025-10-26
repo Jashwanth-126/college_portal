@@ -2,6 +2,119 @@
 
 {% block title %}Section {{ section.name }} Students & Attendance{% endblock %}
 
+{% block head %}
+    {{ super() }}
+    <style>
+        body {
+            background-color: #f0f2f5; /* Light background */
+        }
+        
+        /* Main Heading */
+        h2 {
+            font-weight: 700;
+            color: #343a40;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+        }
+
+        /* Smaller text in the heading */
+        h2 small {
+            color: #6c757d;
+            font-size: 0.6em;
+            font-weight: 500;
+            display: block; /* Place on a new line */
+        }
+
+        /* Top Action Bar (Date Picker, Buttons) */
+        .justify-content-between {
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 20px !important;
+        }
+
+        /* Attendance Date Form */
+        .d-inline-flex {
+            background-color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #007bff;
+        }
+        .form-control {
+            border-color: #ced4da;
+        }
+
+        /* Card Header Overrides */
+        .card-header.bg-primary {
+            background-color: #007bff !important;
+        }
+        .card-header.bg-info {
+            background-color: #17a2b8 !important;
+        }
+
+        /* Table Styling */
+        .table {
+            margin-bottom: 0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: #f8f9fa;
+        }
+        .table thead th {
+            background-color: #343a40; /* Darker header for table */
+            color: white;
+            font-weight: 600;
+            vertical-align: middle;
+            border-bottom: 2px solid #007bff;
+        }
+        .table td {
+            vertical-align: middle;
+        }
+
+        /* Attendance Buttons (Radio Group) */
+        .btn-check:checked + .btn-outline-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-check:checked + .btn-outline-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-check:checked + .btn-outline-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        /* Save Button */
+        .btn-success.w-100 {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Add Student Form Layout */
+        .card-body .row.g-3 {
+            align-items: center;
+        }
+        .card-body .form-control {
+            border-radius: 4px;
+        }
+        .card-body .btn-primary {
+            font-weight: 600;
+        }
+        
+        /* Badge Status Readonly */
+        .badge {
+            padding: 0.5em 0.8em;
+            font-size: 0.9em;
+        }
+
+    </style>
+{% endblock %}
+
 {% block content %}
 <div class="container my-5">
     <div class="row">
@@ -13,7 +126,7 @@
             </h2>
 
             <div class="mb-4 d-flex justify-content-between align-items-center">
-                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary shadow-sm">
                     ← Back to Dashboard
                 </a>
                 
@@ -22,7 +135,7 @@
                     <input type="date" class="form-control" id="date" name="date" value="{{ selected_date }}" onchange="this.form.submit()">
                 </form>
 
-                <a href="{{ url_for('admin_syllabus_manager', section_id=section.id) }}" class="btn btn-info">
+                <a href="{{ url_for('admin_syllabus_manager', section_id=section.id) }}" class="btn btn-info shadow-sm">
                     <i class="fas fa-list-alt"></i> Manage Subject Syllabus
                 </a>
             </div>
@@ -36,7 +149,7 @@
                         <small class="text-light">Attendance is read-only for future dates.</small>
                     {% endif %}
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     {% if students %}
                     <form method="POST" action="{{ url_for('mark_attendance', section_id=section.id) }}">
                         <input type="hidden" name="date" value="{{ selected_date }}">
@@ -59,15 +172,15 @@
                                         <td>
                                             {% set status = att_map.get(student.id, 'Present') %}
                                             {% if can_edit %}
-                                                <div class="btn-group" role="group">
+                                                <div class="btn-group btn-group-sm" role="group">
                                                     <input type="radio" class="btn-check" name="student_{{ student.id }}" id="present_{{ student.id }}" value="Present" {{ 'checked' if status == 'Present' }}>
-                                                    <label class="btn btn-outline-success btn-sm" for="present_{{ student.id }}">Present</label>
+                                                    <label class="btn btn-outline-success" for="present_{{ student.id }}">Present</label>
 
                                                     <input type="radio" class="btn-check" name="student_{{ student.id }}" id="absent_{{ student.id }}" value="Absent" {{ 'checked' if status == 'Absent' }}>
-                                                    <label class="btn btn-outline-danger btn-sm" for="absent_{{ student.id }}">Absent</label>
+                                                    <label class="btn btn-outline-danger" for="absent_{{ student.id }}">Absent</label>
 
                                                     <input type="radio" class="btn-check" name="student_{{ student.id }}" id="holiday_{{ student.id }}" value="Holiday" {{ 'checked' if status == 'Holiday' }}>
-                                                    <label class="btn btn-outline-secondary btn-sm" for="holiday_{{ student.id }}">Holiday</label>
+                                                    <label class="btn btn-outline-secondary" for="holiday_{{ student.id }}">Holiday</label>
                                                 </div>
                                             {% else %}
                                                 <span class="badge 
@@ -84,11 +197,13 @@
                             </table>
                         </div>
                         {% if can_edit %}
-                            <button type="submit" class="btn btn-success mt-3 w-100">Save Attendance</button>
+                            <div class="p-3 border-top">
+                                <button type="submit" class="btn btn-success w-100">Save Attendance</button>
+                            </div>
                         {% endif %}
                     </form>
                     {% else %}
-                    <p class="text-center text-muted">No students enrolled in this section yet.</p>
+                    <p class="text-center text-muted py-4">No students enrolled in this section yet.</p>
                     {% endif %}
                 </div>
             </div>

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Note{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Add Syllabus Note</h1>
+
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('add_note_logic') }}" class="card p-4">
+        
+        <div class="mb-3">
+            <label for="section_id" class="form-label">1. Select Section:</label>
+            <select name="section_id" id="section_id" class="form-select" required onchange="fetchSubjects()">
+                <option value="">-- Choose Section --</option>
+                {% for section in sections %}
+                    <option value="{{ section.id }}">{{ section.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="syllabus_subject_id" class="form-label">2. Select Subject from Syllabus:</label>
+            <select name="syllabus_subject_id" id="syllabus_subject_id" class="form-select" required disabled>
+                <option value="">-- Select Section First --</option>
+            </select>
+            <div id="subject_loading_indicator" class="form-text" style="display:none;">Loading subjects...</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="title" class="form-label">3. Note Title / Description:</label>
+            <input type="text" name="title" id="title" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="note_type" class="form-label">4. Note Type:</label>
+            <select id="note_type" name="note_type" class="form-select" required onchange="toggleInputs(this.value)">
+                <option value="PDF">PDF File</option>
+                <option value="Image">Image File</option>
+                <option value="Link">External Link (e.g., YouTube)</option>
+                <option value="Text">Direct Text Note</option>
+            </select>
+        </div>
+
+        <div id="file_input_container" class="mb-3">
+            <label for="file_upload" class="form-label">Upload File (PDF or Image):</label>
+            <input type="file" name="file_upload" id="file_upload" class="form-control" accept=".pdf,image/*" required>
+        </div>
+
+        <div id="text_input_container" class="mb-3" style="display:none;">
+            <label for="content_input" class="form-label">Content (Paste URL or Write Text):</label>
+            <textarea name="content_input" id="content_input" class="form-control" rows="5"></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary mt-3">💾 Add Note to Syllabus</button>
+    </form>
+</div>
+
+<script>
+    function fetchSubjects() {
+        const sectionId = document.getElementById('section_id').value;
+        const subjectSelect = document.getElementById('syllabus_subject_id');
+        const loadingIndicator = document.getElementById('subject_loading_indicator');
+        
+        subjectSelect.innerHTML = '<option value="">-- Loading Subjects --</option>';
+        subjectSelect.disabled = true;
+        
+        if (!sectionId) {
+            subjectSelect.innerHTML = '<option value="">-- Select Section First --</option>';
+            return;
+        }
+
+        loadingIndicator.style.display = 'block';
+
+        fetch(`/api/syllabus_subjects/${sectionId}`)
+            .then(response => response.json())
+            .then(subjects => {
+                subjectSelect.innerHTML = '<option value="">-- Choose Subject --</option>';
+                subjects.forEach(subject => {
+                    subjectSelect.innerHTML += `<option value="${subject.id}">${subject.subject_name}</option>`;
+                });
+                subjectSelect.disabled = false;
+                loadingIndicator.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error fetching subjects:', error);
+                subjectSelect.innerHTML = '<option value="">-- Error loading subjects --</option>';
+                loadingIndicator.style.display = 'none';
+            });
+    }
+
+    function toggleInputs(type) {
+        const fileDiv = document.getElementById('file_input_container');
+        const textDiv = document.getElementById('text_input_container');
+        
+        document.getElementById('file_upload').removeAttribute('required');
+        document.getElementById('content_input').removeAttribute('required');
+
+        if (type === 'PDF' || type === 'Image') {
+            fileDiv.style.display = 'block';
+            textDiv.style.display = 'none';
+            document.getElementById('file_upload').setAttribute('required', 'required');
+        } else {
+            fileDiv.style.display = 'none';
+            textDiv.style.display = 'block';
+            document.getElementById('content_input').setAttribute('required', 'required');
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        toggleInputs(document.getElementById('note_type').value);
+    });
+</script>
+{% endblock %}

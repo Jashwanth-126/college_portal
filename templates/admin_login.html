@@ -2,7 +2,131 @@
 <html>
 <head>
     <title>Admin Login - SDC PU College Portal</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* General Body and Layout */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5; /* Light, neutral background */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Heading Style */
+        h2 {
+            color: #007bff; /* Primary College Blue */
+            margin-bottom: 25px;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        /* Form Container Styling (The Card) */
+        form {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 380px; /* Standard login form width */
+            text-align: left;
+        }
+        
+        /* Layout Fix: Remove the default spacing effect of <br> tags */
+        form br {
+            display: none; 
+        }
+
+        /* Label Styling */
+        label {
+            display: block;
+            margin-bottom: 5px;
+            margin-top: 15px; /* Spacing between input groups */
+            font-weight: 500;
+            color: #343a40;
+            font-size: 0.95rem;
+        }
+
+        /* Input Field Styling */
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box; /* Ensures padding doesn't affect total width */
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        /* Login Button Styling (Admin Green) */
+        button[type="submit"] {
+            width: 100%;
+            background-color: #28a745; /* Success/Admin Green */
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 25px;
+            transition: background-color 0.3s ease, transform 0.1s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1e7e34;
+            transform: translateY(-1px);
+        }
+
+        /* Forgot Password Link */
+        p {
+            margin-top: 20px;
+            font-size: 0.95rem;
+        }
+
+        p a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        p a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* Flashed Messages Styling */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+            max-width: 380px;
+            width: 100%;
+        }
+
+        ul li {
+            /* Styles for default (red) error message */
+            background-color: #f8d7da; /* Light red background for errors */
+            color: #721c24 !important; /* Dark red text */
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
     <h2>Admin Login</h2>

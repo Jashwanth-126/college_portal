@@ -1,22 +1,177 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Attendance Dashboard</title>
+    <title>Attendance Dashboard - SDC PU College Portal</title>
     <style>
-        .container { display: flex; gap: 20px; }
-        .panel { flex: 1; border: 1px solid #ccc; padding: 15px; }
-        h3 { margin-top: 0; }
+        /* --- GLOBAL STYLES --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 30px;
+            background-color: #f0f2f5; /* Light, professional background */
+            color: #34495e;
+        }
+
+        /* --- HEADER --- */
+        h2 {
+            color: #007bff; /* Primary Blue */
+            font-weight: 700;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        /* --- DATE PICKER FORM --- */
+        form {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        input[type="date"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            flex-grow: 0.5;
+            min-width: 150px;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff; /* Primary Blue */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* --- SELECTED DATE DISPLAY --- */
+        p strong {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 15px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-size: 1.1em;
+            color: #34495e;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* --- CLASS PANELS CONTAINER --- */
+        .container { 
+            display: flex; 
+            gap: 30px; 
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        /* --- INDIVIDUAL PANELS (Science/Commerce) --- */
+        .panel { 
+            flex: 1; 
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 0; /* Remove default padding for internal layout */
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            overflow: hidden;
+        }
+
+        .panel h3 { 
+            margin: 0; 
+            text-align: center;
+            background: #28a745; /* Green header for distinction */
+            color: white;
+            padding: 15px;
+            font-size: 1.3em;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .panel:last-child h3 {
+            background: #ffc107; /* Orange/Yellow header for distinction */
+            color: #343a40;
+        }
+        
+        /* --- CLASS LISTS --- */
+        ul {
+            list-style: none;
+            padding: 0 20px 20px 20px; 
+            margin: 0;
+        }
+
+        ul li { 
+            margin: 8px 0; 
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        ul li:last-child {
+            border-bottom: none;
+        }
+        
+        ul li a { 
+            text-decoration: none; 
+            color: #34495e;
+            font-weight: 600;
+            font-size: 1.05em;
+            transition: color 0.2s;
+        }
+
+        ul li a:hover { 
+            color: #007bff; 
+            text-decoration: underline;
+        }
+        
+        /* Fallback for no classes */
+        ul li.no-data {
+            color: #95a5a6;
+            font-style: italic;
+            text-align: center;
+            padding: 15px 0;
+        }
+        
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            button[type="submit"] {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
-    <h2>Attendance Dashboard</h2>
+    <h2>Attendance Module Dashboard</h2>
 
-    <!-- Date Picker -->
     <form method="GET">
-        <label for="attendance_date">Select Date:</label>
+        <label for="attendance_date">Select Attendance Date:</label>
         <input type="date" id="attendance_date" name="attendance_date" 
                value="{{ selected_date if selected_date else '' }}" required>
-        <button type="submit">Load Attendance</button>
+        <button type="submit">Load Classes</button>
     </form>
 
     {% if selected_date %}
@@ -24,9 +179,8 @@
     {% endif %}
 
     <div class="container">
-        <!-- Left Panel: Science -->
         <div class="panel">
-            <h3>Science</h3>
+            <h3>Science Classes</h3>
             <ul>
                 {% for cls in science_classes %}
                     <li>
@@ -35,14 +189,13 @@
                         </a>
                     </li>
                 {% else %}
-                    <li>No Science classes found.</li>
+                    <li class="no-data">No Science classes found.</li>
                 {% endfor %}
             </ul>
         </div>
 
-        <!-- Right Panel: Commerce -->
         <div class="panel">
-            <h3>Commerce</h3>
+            <h3>Commerce Classes</h3>
             <ul>
                 {% for cls in commerce_classes %}
                     <li>
@@ -51,7 +204,7 @@
                         </a>
                     </li>
                 {% else %}
-                    <li>No Commerce classes found.</li>
+                    <li class="no-data">No Commerce classes found.</li>
                 {% endfor %}
             </ul>
         </div>

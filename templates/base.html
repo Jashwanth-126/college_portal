@@ -17,10 +17,10 @@
                 <ul class="navbar-nav ms-auto">
                     {% if 'admin' in session %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+                            
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}">Admin Logout</a>
+                            
                         </li>
                     {% elif 'user' in session %}
                         <li class="nav-item">

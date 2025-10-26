@@ -2,17 +2,172 @@
 <html>
 <head>
     <title>Register Student - SDC PU College Portal</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* --- GLOBAL STYLES --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 30px;
+            background-color: #f4f7f6;
+            color: #34495e;
+        }
+
+        /* --- HEADINGS --- */
+        h2 {
+            color: #007bff;
+            font-weight: 700;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #34495e;
+            margin-top: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        /* --- FORM STYLES --- */
+        form {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #34495e;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Includes padding in the element's total width/height */
+        }
+
+        button[type="submit"] {
+            background-color: #28a745; /* Success Green */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1e7e34;
+        }
+
+        /* --- TABLE STYLES --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            max-width: 800px;
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        /* --- ACTION LINKS --- */
+        .action-links {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .action-links a, .back-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 500;
+            margin-right: 15px;
+            transition: color 0.2s;
+        }
+
+        .action-links a:hover, .back-link a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+        
+        /* --- FLASH MESSAGES --- */
+        .flash-messages {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        
+        .flash-messages li {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+        
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        
+        .flash-error, .flash-warning {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+    </style>
 </head>
 <body>
     <h2>Register Student</h2>
 
-    <form method="POST">
-        <label>Student Username:</label>
-        <input type="text" name="username" required><br><br>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flash-messages">
+                {% for category, message in messages %}
+                    <li class="flash-{{ category }}">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
 
-        <label>Student Gmail:</label>
-        <input type="email" name="gmail" required><br><br>
+    <form method="POST">
+        <label for="username">Student Username:</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="gmail">Student Gmail:</label>
+        <input type="email" id="gmail" name="gmail" required>
 
         <button type="submit">Register</button>
     </form>
@@ -20,37 +175,31 @@
     <br>
     <h3>Registered Students</h3>
 
-    <table border="1" cellpadding="5">
-        <tr>
-            <th>Username</th>
-            <th>Gmail</th>
-        </tr>
-        {% for student in students %}
-        <tr>
-            <td>{{ student.username }}</td>
-            <td>{{ student.gmail }}</td>
-        </tr>
-        {% endfor %}
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Gmail</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.username }}</td>
+                <td>{{ student.gmail }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 
-    <br>
-    <a href="{{ url_for('export_students_csv') }}">Export as CSV</a> |
-    <a href="{{ url_for('export_students_pdf') }}">Export as PDF</a>
+    <div class="action-links">
+        <a href="{{ url_for('export_students_csv') }}">Export All Students (CSV)</a> 
+        <a href="{{ url_for('export_students_pdf') }}">Export All Students (PDF)</a>
+    </div>
 
-    <br><br>
-    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
-
-   {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <ul>
-            {% for category, message in messages %}
-                <li style="color: {{ 'green' if category == 'success' else 'red' }};">
-                    {{ message }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
+    <div class="back-link">
+        <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+    </div>
 
 </body>
 </html>

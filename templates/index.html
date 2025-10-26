@@ -2,16 +2,90 @@
 <html>
 <head>
     <title>SDC PU College Portal</title>
+    <style>
+        /* Global Reset and Body Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Container for Centering and Styling */
+        .portal-container {
+            background-color: #ffffff; /* White card background */
+            padding: 40px 50px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        /* Heading Style */
+        h2 {
+            color: #007bff; /* Primary college blue */
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        /* Button Styling */
+        button {
+            width: 100%; /* Full width of the container */
+            padding: 15px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            letter-spacing: 0.5px;
+        }
+
+        /* Admin Button Specifics (More prominent) */
+        a:first-of-type button {
+            background-color: #28a745; /* Green for Admin (Security) */
+            color: white;
+        }
+        a:first-of-type button:hover {
+            background-color: #1e7e34;
+            transform: translateY(-2px);
+        }
+
+        /* User Button Specifics (Standard) */
+        a:last-of-type button {
+            background-color: #007bff; /* Blue for User/Student */
+            color: white;
+        }
+        a:last-of-type button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Remove default link styling */
+        a {
+            text-decoration: none;
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <h2>Welcome to SDC PU College Portal</h2>
+    <div class="portal-container">
+        <h2>Welcome to SDC PU College Portal</h2>
 
-    <a href="{{ url_for('admin_login') }}">
-        <button>Admin Login</button>
-    </a>
-    <br><br>
-    <a href="{{ url_for('user_login') }}">
-        <button>User Login</button>
-    </a>
+        <a href="{{ url_for('admin_login') }}">
+            <button>Admin Login</button>
+        </a>
+        
+        <a href="{{ url_for('user_login') }}">
+            <button>User Login</button>
+        </a>
+    </div>
 </body>
 </html>

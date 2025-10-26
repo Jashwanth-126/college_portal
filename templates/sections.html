@@ -1,26 +1,174 @@
-<!-- templates/sections.html -->
 <!DOCTYPE html>
 <html>
-<head><title>Sections</title></head>
+<head>
+    <title>Manage Sections - SDC PU College Portal</title>
+    <style>
+        /* --- GLOBAL STYLES --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 30px;
+            background-color: #f0f2f5; /* Light background */
+            color: #34495e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px; /* Limit content width */
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- HEADER --- */
+        h2 {
+            color: #007bff; /* Primary Blue */
+            font-weight: 700;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* --- ADD SECTION FORM --- */
+        form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            background-color: #28a745; /* Green for Add button */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1e7e34;
+            transform: translateY(-1px);
+        }
+
+        /* --- SECTIONS LIST --- */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background: #ffffff;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            transition: box-shadow 0.2s;
+        }
+
+        ul li:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        ul li a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.2s;
+        }
+
+        ul li a:hover {
+            background-color: #e9f2ff; /* Light blue hover background */
+            color: #007bff;
+            border-radius: 6px;
+        }
+
+        /* --- BACK LINK --- */
+        .back-link {
+            display: block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #6c757d; /* Grey button */
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            max-width: 200px;
+        }
+
+        .back-link:hover {
+            background-color: #5a6268;
+        }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            form {
+                flex-direction: column;
+            }
+            input[type="text"] {
+                margin-bottom: 5px;
+            }
+            button[type="submit"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
 <body>
-  <h2>{{ course.name }} - {{ class_info.name }} (Sections)</h2>
+    <div class="container">
+        <h2>{{ course.name }} - {{ class_info.name }} (Sections)</h2>
 
-  <form method="post">
-    <input type="text" name="section_name" placeholder="Section Name">
-    <button type="submit">Add Section</button>
-  </form>
+        <form method="post">
+            <input type="text" name="section_name" placeholder="Enter New Section Name (e.g., A, B, C)" required>
+            <button type="submit">Add Section</button>
+        </form>
 
-<ul>
-    {% for sec in sections %}
-        <li>
-            <a href="{{ url_for('section_students', section_id=sec.id, date=selected_date) }}">
-                {{ sec.name }}
-            </a>
-        </li>
-    {% endfor %}
-</ul>
-
-
-  <a href="{{ url_for('attendance_dashboard') }}">Back</a>
+        {% if sections %}
+            <ul>
+                {% for sec in sections %}
+                    <li>
+                        <a href="{{ url_for('section_students', section_id=sec.id, date=selected_date) }}">
+                            Section: {{ sec.name }}
+                            </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="text-align: center; color: #95a5a6; padding: 20px;">No sections defined for this class yet. Add one above.</p>
+        {% endif %}
+        
+    </div>
+    
+    <a href="{{ url_for('attendance_dashboard') }}" class="back-link">Back to Attendance Dashboard</a>
 </body>
 </html>

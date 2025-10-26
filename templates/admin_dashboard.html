@@ -1,115 +1,221 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Admin Dashboard - SDC PU College Portal</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h2 {
-            color: #2c3e50;
-        }
-        .menu {
-            margin-top: 20px;
-        }
-        .menu a {
-            display: inline-block;
-            margin: 8px 0;
-            padding: 8px 12px;
-            background: #3498db;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .menu a:hover {
-            background: #2980b9;
-        }
-        .attendance-container {
-            display: flex;
-            margin-top: 30px;
-            gap: 40px;
-        }
-        .panel {
-            flex: 1;
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .panel h3 {
-            margin-top: 0;
-            text-align: center;
-            background: #f4f4f4;
-            padding: 8px;
-            border-radius: 4px;
-        }
-        ul {
-            list-style: none;
+        /* Global Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
             padding: 0;
         }
-        ul li {
-            margin: 5px 0;
-        }
-        ul li a {
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e6f2ff 100%);
             color: #34495e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Section */
+        header {
+            background: #007bff;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        header h1 {
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1em;
+            color: #eaf4ff;
+        }
+
+        /* Navigation Menu */
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: #ffffff;
+            padding: 20px;
+            border-bottom: 2px solid #ddd;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            gap: 15px;
+        }
+
+        .menu a {
             text-decoration: none;
+            color: white;
+            background: #3498db;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
-        ul li a:hover {
-            text-decoration: underline;
+
+        .menu a:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
         }
+
+        .menu .add-note-btn {
+            background: #2ecc71;
+        }
+
+        .menu .add-note-btn:hover {
+            background: #27ae60;
+        }
+
+        .menu .logout-btn {
+            background: #e74c3c !important;
+            margin-left: auto;
+        }
+
+        .menu .logout-btn:hover {
+            background: #c0392b !important;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            flex: 1;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 18px rgba(0,0,0,0.15);
+        }
+
+        .dashboard-card h3 {
+            background: #007bff;
+            color: white;
+            padding: 12px;
+            border-radius: 8px 8px 0 0;
+            margin: -25px -25px 20px -25px;
+            font-weight: 600;
+        }
+
+        .dashboard-card p {
+            font-size: 1em;
+            color: #6c7a89;
+            line-height: 1.6;
+        }
+
+        .dashboard-card a {
+            display: inline-block;
+            margin-top: 15px;
+            text-decoration: none;
+            background: #3498db;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .dashboard-card a:hover {
+            background: #2980b9;
+        }
+
+        /* Footer Section */
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #007bff;
+            color: white;
+            font-size: 0.95em;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .menu {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
     </style>
 </head>
 <body>
-    <h2>Welcome, {{ admin }}</h2>
-    <p>This is the Admin Dashboard</p>
+    <header>
+        <div>
+            <h1>Welcome, {{ admin }}</h1>
+            <p>SDC PU College - Admin Dashboard</p>
+        </div>
+    </header>
 
-    <div class="menu">
-        <a href="{{ url_for('register_student') }}">Register Student (Admissions)</a>
-        <a href="{{ url_for('attendance_dashboard') }}">Attendance Module</a>
-        <a href="{{ url_for('attendance_report') }}">Attendance Reports</a>
-        <a href="{{ url_for('marks_entry') }}">Marks Entry</a>
-<a href="{{ url_for('marks_report') }}">Marks Report</a>
+    <nav class="menu">
+        <a href="{{ url_for('register_student') }}">🎓 Register Student</a>
+        <a href="{{ url_for('attendance_dashboard') }}">📅 Attendance Module</a>
+        <a href="{{ url_for('attendance_report') }}">📊 Attendance Reports</a>
+        <a href="{{ url_for('marks_entry') }}">📝 Marks Entry</a>
+        <a href="{{ url_for('marks_report') }}">📘 Marks Report</a>
+        <a href="{{ url_for('add_note_logic') }}" class="add-note-btn">📚 Add Syllabus Note</a>
+        <a href="{{ url_for('admin_syllabus_manager') }}">📖 Manage Subjects</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">🚪 Logout</a>
+    </nav>
 
-        <a href="{{ url_for('logout') }}">Logout</a>
-    </div>
-
-    <!-- Attendance split panel -->
-    <div class="attendance-container">
-        <!-- Left Panel: Science -->
-        <div class="panel">
-            <h3>Science Classes</h3>
-            {% if science_classes %}
-                <ul>
-                    {% for c in science_classes %}
-                        <li>
-                            <a href="{{ url_for('manage_sections', class_id=c.id) }}">
-                                {{ c.name }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No Science classes found.</p>
-            {% endif %}
+    <main class="dashboard-container">
+        <div class="dashboard-card">
+            <h3>Admissions Overview</h3>
+            <p>Manage new student admissions and update existing records.</p>
+            <a href="{{ url_for('register_student') }}">Go to Admissions</a>
         </div>
 
-        <!-- Right Panel: Commerce -->
-        <div class="panel">
-            <h3>Commerce Classes</h3>
-            {% if commerce_classes %}
-                <ul>
-                    {% for c in commerce_classes %}
-                        <li>
-                            <a href="{{ url_for('manage_sections', class_id=c.id) }}">
-                                {{ c.name }}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No Commerce classes found.</p>
-            {% endif %}
+        <div class="dashboard-card">
+            <h3>Attendance Module</h3>
+            <p>Track, record, and monitor student attendance data efficiently.</p>
+            <a href="{{ url_for('attendance_dashboard') }}">Open Attendance</a>
         </div>
-    </div>
+
+        <div class="dashboard-card">
+            <h3>Marks & Reports</h3>
+            <p>Enter marks and generate subject-wise and student-wise performance reports.</p>
+            <a href="{{ url_for('marks_entry') }}">Manage Marks</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Syllabus Management</h3>
+            <p>Add new syllabus notes and organize subjects for all courses and semesters.</p>
+            <a href="{{ url_for('admin_syllabus_manager') }}">Manage Syllabus</a>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 SDC PU College | Admin Dashboard | Designed with 💙 for academic excellence
+    </footer>
 </body>
 </html>
