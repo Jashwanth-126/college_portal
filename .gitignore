@@ -21,17 +21,17 @@ env/
 docs/_build/
 
 # IDE/Editor Files
-.vscode/  # VS Code settings
-.idea/    # PyCharm/IntelliJ settings
+.vscode/
+.idea/
 *~
-.DS_Store # macOS files
+.DS_Store
 
 # ------------------------------------
 # Security / Environment Variables
 # CRITICAL: DO NOT COMMIT SECRETS
 # ------------------------------------
 
-# Local environment file containing database keys and API secrets (Supabase, Flask Secret Key, Mail)
+# Local environment file containing database keys and API secrets
 .env
 
 # Flask session files (if used in development mode)

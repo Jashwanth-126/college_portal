@@ -2,8 +2,10 @@ Flask
 python-dotenv
 requests
 supabase
-psycopg2-binary  # Necessary for any raw Postgres interaction
-gunicorn         # Production WSGI server
+psycopg2-binary
+gunicorn
+gevent  # Added for production worker concurrency
+Werkzeug  # Added for file handling utilities
 Flask-Mail
 Jinja2
 reportlab
